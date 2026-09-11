@@ -438,22 +438,24 @@
     box-shadow: none;
   }
 
-  /* Back — height and L/R pad are set per instance (sidenav 24/8 via
-     `h-6 px-2`; drawer 32/12 via `h-8 px-3`). `border-box` keeps the 1px
-     outline inside that box (otherwise the outlined control grows by 2). */
+  /* Back — drawer keeps the outlined Rivet control (32/12 via `h-8 px-3`).
+     Sidenav Back is a text link (24px / 12px type, no box). `border-box`
+     keeps the drawer 1px outline inside its 32px box. */
   .nav-btn-back {
     box-sizing: border-box;
   }
-  /* Shrink-wrap in the sidenav so the outlined control does not leave a
-     1px inline line-box under it (that gap threw title/crumb centers off).
-     Drawer Back stays `inline-flex` in its flex header row. */
+  /* Shrink-wrap in the sidenav. No outline — padding is 0 so the arrow
+     lines up with title/item text. Height stays 24px so crumb math
+     (`has-sidenav-back` +24) is unchanged. Drawer stays `inline-flex`. */
   #sidenav .nav-btn-back {
     display: flex;
     width: max-content;
+    border: 0;
+    padding-inline: 0;
   }
 
-  /* Close X + Back — Rivet default `.rvt-button:hover` (Normal / outline).
-     Fill stays transparent; text + border → inverse-strong `#000`. */
+  /* Close X + drawer Back — Rivet default `.rvt-button:hover` (Normal /
+     outline). Fill stays transparent; text + border → inverse-strong `#000`. */
   .nav-btn-close:hover,
   .nav-btn-close:active,
   .nav-btn-back:hover,
@@ -462,6 +464,16 @@
     color: #000;
     border-color: #000;
     text-decoration: none;
+    box-shadow: none;
+  }
+
+  /* Sidenav Back — text-link hover (underline), not the outlined button. */
+  #sidenav .nav-btn-back:hover,
+  #sidenav .nav-btn-back:active {
+    background-color: transparent;
+    color: inherit;
+    border-color: transparent;
+    text-decoration: underline;
     box-shadow: none;
   }
 
@@ -1529,7 +1541,7 @@
 
     const back = parent
       ? `<a data-nav href="${href(parent)}" ` +
-        `class="nav-btn-back inline-flex h-6 items-center gap-2 border border-ink px-2 text-ink">` +
+        `class="nav-btn-back inline-flex h-6 items-center gap-2 text-ink">` +
         `<span data-icon="arrow-left" class="block size-3 shrink-0"></span>` +
         `<span class="t-sidenav-back">${esc(PAGES[parent].l)}</span></a>`
       : '';
