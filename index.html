@@ -132,7 +132,7 @@
   .t9  { font-size:20px; line-height:28px; font-variation-settings:'wght' 350,'wdth' 110; }
   /* T10 — Body/base/regular (interior lede). */
   .t10 { font-size:16px; line-height:24px; font-variation-settings:'wght' 350,'wdth' 110; }
-  /* T11 / T12 — Body/small/regular, and the search placeholder. */
+  /* T11 / T12 — Body/small/regular, and the search-drawer placeholder. */
   .t11 { font-size:16px; line-height:24px; font-variation-settings:'wght' 350,'wdth' 110; }
   /* T13 — Action/extra-large/strong: drawer level-1 nav item. */
   .t13 { font-size:20px; line-height:24px; font-variation-settings:'wght' 600,'wdth' 115; }
@@ -298,7 +298,7 @@
   rvt-body, rvt-header, rvt-main, rvt-breadcrumbs,
   rvt-prototype-header-menu, rvt-prototype-search, rvt-prototype-nav { display:block; }
 
-  /* The search placeholder is T12 — Figma header field "Search the site". */
+  /* The search placeholder is T12 — zoo source / drawer: "Search this site". */
   #site-search::placeholder { color:#343C42; opacity:1; }
 
   /* Skip link: visually hidden until focused. The source ships
@@ -315,9 +315,9 @@
   /* =========================================================================
      NAV CHROME BUTTONS — 40px tall, borders inside the box
      -------------------------------------------------------------------------
-     In-scope: masthead Menu & Search, drawer close, drawer Volunteer /
-     Become a member. Forked from the T-scale and from content CTAs on
-     purpose so a 40px height cannot leak into the hero or sidenav.
+     In-scope: masthead Search (and mobile Menu), header CTAs, drawer close,
+     drawer Volunteer / Become a member. Forked from the T-scale and from
+     content CTAs so a 40px height cannot leak into the hero or sidenav.
 
      RECONCILED: Figma's masthead desktop button is 48px (spec 5) and the
      drawer CTAs are 48px (spec 7). Both are 40px here. `border-box` keeps
@@ -501,11 +501,11 @@
 
      Layout:
        - Header is `position: sticky; top: 0; left: 0; right: 0; width: 100%`.
-         Lockup left, Menu & Search right, same bar, no `--sidenav-width`
-         offset, no 325px right spacer. Height is `--header-h` (80px) at
-         every width, with `padding-top/bottom: 16px` and
-         `box-sizing: border-box` so the inner row is 48px; the 40px Menu &
-         Search button and the lockup vertically center in that row.
+         No `--sidenav-width` offset, no 325px right spacer. Height is
+         `--header-h` (76px mobile / 120px desktop) with
+         `padding-top/bottom: 16px` and `box-sizing: border-box`. Desktop
+         stacks lockup+CTAs+search over the section links; mobile is one
+         lockup row with Search + Menu icons.
        - Sidenav sits under the header. On interior >=lg it is sticky with
          `top: var(--header-h)` so it never covers the lockup/Menu bar, and
          it stays while the main column scrolls. `max-height` (not a forced
@@ -542,7 +542,7 @@
   :root {
     --sidenav-width: 280px;
     --sidenav-pad-x: 24px; /* equal inner L/R; measured from the cream-rule gap */
-    --header-h: 76px;      /* Figma mobile masthead 375×76 (16px pad + 44px lockup) */
+    --header-h: 76px;      /* 16 + 44px lockup + 16 */
     --chrome-gutter: 16px; /* header *right* inset only; former `px-4` */
   }
 
@@ -557,7 +557,7 @@
   }
 
   /* Height lives on the <header> so the cream border stays inside --header-h
-     (76 mobile / 136 desktop) and sticky sidenav `top` stays in lockstep. */
+     (76 mobile / 120 desktop) and sticky sidenav `top` stays in lockstep. */
   rvt-header header {
     position: relative;
     height: var(--header-h);
@@ -634,47 +634,43 @@
     box-shadow: none;
   }
 
-  .masthead-search {
+  /* Header CTAs — Figma `1436:242596` / `1436:242597` (crimson outline,
+     Action/small/strong, arrow). Height 40px (Figma medium token 32;
+     signed-off chrome is 40). Padding 12 matches Figma `--rvt-size-12`. */
+  .masthead-ctas {
     display: none;
   }
-
-  body.search-open rvt-header header {
-    height: auto;
-  }
-
-  body.search-open .masthead-search {
-    display: block;
+  .masthead-cta {
     box-sizing: border-box;
-    padding: 0 16px 16px;
-    background: #fff;
-  }
-
-  .masthead-search form {
     display: flex;
     align-items: center;
-    box-sizing: border-box;
-    width: 100%;
-    height: 48px;
-    padding-left: 12px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0 12px;
     gap: 8px;
-    border: 1px solid #1F2528;
+    flex-shrink: 0;
+    color: #990000;
+    background-color: transparent;
+    border: 1px solid #990000;
+    text-decoration: none;
+  }
+  .masthead-cta:hover,
+  .masthead-cta:active {
+    background-color: transparent;
+    color: #6D0808;
+    border-color: #6D0808;
+    text-decoration: none;
+    box-shadow: none;
   }
 
-  .masthead-search input[type="search"] {
-    min-width: 0;
-    flex: 1;
-    background: transparent;
-    color: #1F2528;
-    outline: none;
-  }
   /* Search field — Rivet `.rvt-header__search-bar input`: no hover rule.
      `:focus` clears outline/shadow; `:focus-visible` is the global 2px
-     accent-strong ring. */
-  .masthead-search input[type="search"]:focus {
+     accent-strong ring. Lives in the search drawer, not the masthead. */
+  #search-drawer input[type="search"]:focus {
     outline: none;
     box-shadow: none;
   }
-  .masthead-search input[type="search"]:focus-visible {
+  #search-drawer input[type="search"]:focus-visible {
     isolation: isolate;
     outline: 2px solid #6D0808;
     outline-offset: 2px;
@@ -725,6 +721,7 @@
 
   .masthead-top > a:focus-visible,
   .masthead-tool:focus-visible,
+  .masthead-cta:focus-visible,
   .masthead-nav-link:focus-visible {
     isolation: isolate;
     outline: 2px solid #6D0808;
@@ -768,7 +765,7 @@
 
   @media screen(lg) {
     :root {
-      --header-h: 136px;     /* Figma desktop masthead: 24 + 64 + 48 */
+      --header-h: 120px;     /* 16 + 48 lockup + 16 gap + 24 nav + 16 */
       --chrome-gutter: 40px; /* 16px outer + 24px inner; matches Figma header */
     }
 
@@ -778,7 +775,7 @@
     }
 
     .masthead-inner {
-      padding: 24px 16px 0;
+      padding: 16px 16px 0;
     }
 
     .masthead-top {
@@ -786,30 +783,37 @@
       padding: 0 24px 16px;
     }
 
-    .masthead-tools {
+    .masthead-ctas {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Figma `1436:242598`: 32×32 ink square. 40×40 aligns with header CTAs. */
+    .masthead-search-btn {
+      box-sizing: border-box;
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      min-height: 40px;
+      border: 1px solid #1F2528;
+    }
+    .masthead-search-btn:hover,
+    .masthead-search-btn:active {
+      color: #000;
+      border-color: #000;
+      background-color: transparent;
+    }
+
+    #menu-toggle {
       display: none;
-    }
-
-    body.search-open rvt-header header {
-      height: var(--header-h);
-    }
-
-    .masthead-search,
-    body.search-open .masthead-search {
-      display: block;
-      padding: 0;
-      background: transparent;
-    }
-
-    .masthead-search form {
-      width: 450px;
     }
 
     .masthead-primary {
       display: flex;
       align-items: center;
       gap: 24px;
-      padding: 0 24px 24px;
+      padding: 0 24px 16px;
     }
     .has-sidenav #sidenav {
       position: sticky;
@@ -884,11 +888,11 @@
 
   <!-- =====================================================================
        REGION 1 — MASTHEAD
-       Figma rvt-header `1431:80017` (desktop 1600×136) + `1431:103547`
-       (mobile 375×76). Search and global Menu are separate controls.
-       Desktop: lockup + "Search the site" field + primary section links.
-       Mobile: lockup + Search icon + Menu icon; Menu opens the existing
-       drawer, Search opens the same field in a header panel.
+       Figma rvt-header `1436:242590` (desktop; 16px top/bottom pad → 120px)
+       + mobile 375×76 (16 + 44 lockup + 16). Desktop: lockup, section
+       links, crimson CTAs, search icon. Mobile: lockup, search icon, Menu.
+       Search opens a drawer (zoo v1 panel: trident, close, field + Go).
+       Menu (mobile) opens the existing nav drawer. No inline search field.
        ===================================================================== -->
   <rvt-header>
     <!-- Cream rule is inside --header-h so sticky sidenav `top` stays aligned. -->
@@ -900,23 +904,21 @@
             <span class="rvt-lockup__title t1">Indiana Zooniversity</span>
           </a>
 
-          <div id="site-search-wrap" class="masthead-search">
-            <rvt-prototype-search>
-              <search>
-                <form id="site-search-form" action="">
-                  <label for="site-search" class="sr-only">Search the site</label>
-                  <span data-icon="magnifying-glass" class="block size-4 shrink-0 text-ink"></span>
-                  <input id="site-search" name="search" type="search" placeholder="Search the site"
-                         class="t11 text-ink">
-                  <button type="submit" class="nav-btn-go h-12 shrink-0 bg-ink px-4 t14 text-white">Go</button>
-                </form>
-              </search>
-            </rvt-prototype-search>
-          </div>
-
           <div class="masthead-tools">
-            <button id="search-toggle" type="button" aria-expanded="false" aria-controls="site-search-wrap"
-                    class="masthead-tool">
+            <div class="masthead-ctas">
+              <!-- GAP: Figma labels this "Work at the Zoo"; SITE has no matching
+                   page. Closest existing destination is Volunteer. -->
+              <a data-nav href="#/volunteer" class="masthead-cta">
+                <span class="t16">Work at the Zoo</span>
+                <span data-icon="arrow-right" class="block size-4 shrink-0"></span>
+              </a>
+              <a data-nav href="#/membership" class="masthead-cta">
+                <span class="t16">Become a Member</span>
+                <span data-icon="arrow-right" class="block size-4 shrink-0"></span>
+              </a>
+            </div>
+            <button id="search-toggle" type="button" aria-expanded="false" aria-controls="search-drawer"
+                    class="masthead-tool masthead-search-btn">
               <span class="sr-only">Search</span>
               <span data-icon="magnifying-glass" class="block size-4"></span>
             </button>
@@ -1085,6 +1087,36 @@
     </div>
   </rvt-prototype-header-menu>
 
+  <!-- Search drawer — zoo v1 panel chrome (trident, close, field + Go).
+       Opened from the masthead search icon at every breakpoint. -->
+  <div id="search-drawer" aria-label="Search"
+       class="fixed inset-y-0 right-0 z-50 flex w-full translate-x-full flex-col bg-white
+              transition-transform duration-[250ms] ease-out lg:w-[533px]">
+    <div class="flex h-24 shrink-0 items-center justify-between px-6">
+      <a data-nav href="#/" aria-label="Indiana Zooniversity" class="shrink-0">
+        <span data-icon="trident-tab" class="block h-11 w-[37px] text-crimson lg:h-12 lg:w-[41px]"></span>
+      </a>
+      <button id="search-drawer-close" type="button"
+              class="nav-btn nav-btn-close border border-ink text-ink">
+        <span data-icon="close" class="block size-4"></span>
+        <span class="sr-only">Search</span>
+      </button>
+    </div>
+    <div class="px-6 pb-6">
+      <rvt-prototype-search class="block">
+        <search>
+          <form id="site-search-form" action="" class="flex h-12 items-center gap-2 border border-ink pl-3">
+            <label for="site-search" class="sr-only">Search this site</label>
+            <span data-icon="magnifying-glass" class="block size-4 shrink-0 text-ink"></span>
+            <input id="site-search" name="search" type="search" placeholder="Search this site"
+                   class="t11 min-w-0 flex-1 bg-transparent text-ink outline-none">
+            <button type="submit" class="nav-btn-go h-12 shrink-0 bg-ink px-4 t14 text-white">Go</button>
+          </form>
+        </search>
+      </rvt-prototype-search>
+    </div>
+  </div>
+
 </rvt-body>
 
 <script>
@@ -1127,7 +1159,7 @@
   const PAGES = SITE.pages;
   const HOME = SITE.home;
 
-  /* Figma header primary nav (`1431:80028`). Labels match SITE `l` for the
+  /* Figma header primary nav (`1436:242602`). Labels match SITE `l` for the
      home children. "Conservation & Wildlife Care" is in that frame but has
      no matching page in this SITE tree, so it is omitted (no invented IA). */
   const HEADER_NAV = [
@@ -1619,10 +1651,10 @@
      or delay (spec 13.2). 250ms ease-out is a choice, not a measurement.
      ========================================================================= */
   const drawer = document.getElementById('drawer');
+  const searchDrawer = document.getElementById('search-drawer');
   const scrim = document.getElementById('scrim');
   const toggle = document.getElementById('menu-toggle');
   const searchToggle = document.getElementById('search-toggle');
-  const searchWrap = document.getElementById('site-search-wrap');
   const searchInput = document.getElementById('site-search');
   let drawerOpen = false;
   let searchOpen = false;
@@ -1659,58 +1691,78 @@
     return section ? ancestry(section).filter((s) => s !== HOME) : [];
   }
 
-  function openDrawer() {
-    closeSearch();
-    stack = desktopView.matches ? [] : stackForCurrentPage();
-    renderDrawer();
+  function hideScrimIfIdle() {
+    if (drawerOpen || searchOpen) return;
+    scrim.classList.add('opacity-0');
+    scrim.classList.remove('pointer-events-auto');
+    document.body.classList.remove('overflow-hidden');
+    setTimeout(() => { if (!drawerOpen && !searchOpen) scrim.hidden = true; }, 250);
+  }
 
-    drawerOpen = true;
+  function showScrim() {
     scrim.hidden = false;
     requestAnimationFrame(() => {
       scrim.classList.remove('opacity-0');
       scrim.classList.add('pointer-events-auto');
+    });
+    document.body.classList.add('overflow-hidden');
+  }
+
+  function openDrawer() {
+    closeSearch({ keepScrim: true });
+    stack = desktopView.matches ? [] : stackForCurrentPage();
+    renderDrawer();
+
+    drawerOpen = true;
+    showScrim();
+    requestAnimationFrame(() => {
       drawer.classList.remove('translate-x-full');
     });
     toggle.setAttribute('aria-expanded', 'true');
-    document.body.classList.add('overflow-hidden');
     document.getElementById('drawer-close').focus();
   }
 
-  function closeDrawer() {
+  function closeDrawer(opts) {
+    if (!drawerOpen) return;
     drawerOpen = false;
     drawer.classList.add('translate-x-full');
-    scrim.classList.add('opacity-0');
-    scrim.classList.remove('pointer-events-auto');
     toggle.setAttribute('aria-expanded', 'false');
-    document.body.classList.remove('overflow-hidden');
+    if (!opts || !opts.keepScrim) hideScrimIfIdle();
     // The panel is translated off-canvas rather than removed, so focus has to
     // be handed back explicitly — otherwise it stays on the close button, which
     // is now sitting off-screen. Only reclaim it if it is still inside the
     // panel, so a click that navigated somewhere keeps whatever focus it set.
     if (drawer.contains(document.activeElement)) toggle.focus();
-    setTimeout(() => { if (!drawerOpen) scrim.hidden = true; }, 250);
   }
 
   function openSearch() {
-    if (drawerOpen) closeDrawer();
+    closeDrawer({ keepScrim: true });
     searchOpen = true;
-    document.body.classList.add('search-open');
+    showScrim();
+    requestAnimationFrame(() => {
+      searchDrawer.classList.remove('translate-x-full');
+    });
     searchToggle.setAttribute('aria-expanded', 'true');
     searchInput.focus();
   }
 
-  function closeSearch() {
+  function closeSearch(opts) {
     if (!searchOpen) return;
     searchOpen = false;
-    document.body.classList.remove('search-open');
+    searchDrawer.classList.add('translate-x-full');
     searchToggle.setAttribute('aria-expanded', 'false');
-    if (searchWrap.contains(document.activeElement)) searchToggle.focus();
+    if (!opts || !opts.keepScrim) hideScrimIfIdle();
+    if (searchDrawer.contains(document.activeElement)) searchToggle.focus();
   }
 
   toggle.addEventListener('click', () => (drawerOpen ? closeDrawer() : openDrawer()));
   searchToggle.addEventListener('click', () => (searchOpen ? closeSearch() : openSearch()));
   document.getElementById('drawer-close').addEventListener('click', closeDrawer);
-  scrim.addEventListener('click', closeDrawer);
+  document.getElementById('search-drawer-close').addEventListener('click', closeSearch);
+  scrim.addEventListener('click', () => {
+    if (drawerOpen) closeDrawer();
+    if (searchOpen) closeSearch();
+  });
 
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
@@ -1732,13 +1784,8 @@
     if (e.target.closest('[data-drawer-root]')) { stack = []; renderDrawer(); }
   });
 
-  /* Search form — no backend in the prototype; submit is swallowed.
-     Figma header field has no clear button. */
+  /* Search form — no backend in the prototype; submit is swallowed. */
   searchInput.form.addEventListener('submit', (e) => e.preventDefault());
-
-  desktopView.addEventListener('change', (e) => {
-    if (e.matches) closeSearch();
-  });
 
   /* =========================================================================
      ROUTER
