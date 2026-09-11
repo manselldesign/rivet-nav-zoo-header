@@ -529,15 +529,15 @@
          visible when the item list is short.
        - Left-anchored: masthead and `#layout` drop `mx-auto max-w-[1600px]`
          so extra viewport width accrues on the right; left edges do not
-         drift.          Header `padding-left` is `--sidenav-pad-x` so the lockup
-         left edge matches sidenav item text, not
+         drift. Header `padding-left` is `--sidenav-pad-x` so the lockup
+         left edge matches sidenav item text (heading + Overview row), not
          the sidenav *column* at `left: 0`. That same lockup x holds on
          Home (no rail) so the mark does not jump when navigating to an
          interior page. `--chrome-gutter` is the header *right* inset only
          (16px / 40px = the old `px-4 lg:px-10`) so Menu & Search stays
          balanced; it is not reused on the left.
        - Sidenav inner L/R stay `--sidenav-pad-x` (the already-equalised
-         column pad). Item L/R padding stays 0, so row text
+         column pad). Item L/R padding stays 0, so heading and row text
          start at that gutter. The lockup is not moved into the sidenav;
          the header stays full width on top.
 
@@ -761,10 +761,10 @@
   }
 
   /*
-    Sidenav item links only (section landing + children in the <ul>). Not
-    Back, not the drawer. 12px T/B hug the wrapped label (no h-11). T18
-    keeps 14px / wght 350 / wdth 112.5; the line box is 16px so the 12px
-    pad is hairline-to-ink. .t18 elsewhere (breadcrumbs) stays 20px. html
+    Sidenav item links only (Overview + children in the <ul>). Not Back,
+    not the drawer. 12px T/B hug the wrapped label (no h-11). T18 keeps
+    14px / wght 350 / wdth 112.5; the line box is 16px so the 12px pad is
+    hairline-to-ink. .t18 elsewhere (breadcrumbs) stays 20px. html
     preflight line-height 1.5 (24px) must not apply to these rows.
   */
   #sidenav ul a.sidenav-item {
@@ -861,19 +861,20 @@
     }
     /*
       Interior content column only (Home has no .has-sidenav / breadcrumbs).
-      Centers the breadcrumb <ol> (20px line) on the first sidenav item
-      *text* (16px line), not the row box and not the Back control. First
-      item top is `#sidenav` 24 + optional Back 24; text top is that + 12
-      (row pad); text center = text top + 8. Crumb top = that − 10.
-      Re-verify Δ(first-item text cy − crumb ol cy) ≈ 0 if the stack
-      changes. `.has-sidenav-back` adds the 24px Back; pages without a
-      sidenav never get this padding.
+      Centers the breadcrumb <ol> (20px) on the sidenav title *text* (20px
+      line), not the title+rule box and not the Back control. Title top is
+      `#sidenav` 24 + optional Back 24 + heading wrap 24. Title text center
+      = title top + 10; crumb top = that − 10. Title `pb-2` (8px to the
+      cream rule) and item row padding do not move the title; re-verify
+      Δ(title text cy − crumb ol cy) ≈ 0 if the title stack changes
+      (one-line or wrapped). `.has-sidenav-back` follows the title when
+      Back is present; pages without a sidenav never get this padding.
     */
     .has-sidenav .interior-content {
-      padding-top: 34px; /* no Back: item text cy 44 → crumb at 34 */
+      padding-top: 48px; /* no Back: title at 48 → crumb at 48 */
     }
     .has-sidenav.has-sidenav-back .interior-content {
-      padding-top: 58px; /* Back 24: item text cy 68 → crumb at 58 */
+      padding-top: 72px; /* Back 24: title at 72 → crumb at 72 */
     }
   }
 </style>
@@ -1184,19 +1185,15 @@
   ].filter(([slug]) => PAGES[slug]);
 
   /* -------------------------------------------------------------------------
-     RECONCILED — the drawer "…Overview" row.
-     Figma's drill-down panels open with a first row labelled
+     RECONCILED — the "…Overview" row.
+     Figma's drill-down panels and sidenav open with a first row labelled
      "<Section> Overview" (e.g. "Africa Overview") that links to the section's
      own page. Structurally that row IS the source's contextual "branch link",
      but the source labels it with the bare section name; the word "Overview"
      appears ZERO times across all 216 source pages.
 
-     The sidenav uses the bare section name (no "Overview") so the first row
-     is the parent/landing of that panel. The drawer keeps this helper so
-     dropping Overview in the rail does not change the drawer.
-
      'figma'  — compose "<label> Overview": matches the Figma screenshots and
-                spec 8, and avoids a row that repeats its own heading.
+                spec 8/9, and avoids a row that repeats its own heading.
      'source' — use the bare section label: uses only strings that exist in the
                 source HTML, at the cost of a visually duplicated label.
      ------------------------------------------------------------------------- */
@@ -1507,20 +1504,21 @@
 
   /* =========================================================================
      SIDENAV  (spec 9, `rvt-sidenav`)
-     Back button to the section's parent (when nested), then the section's own
-     page as the first row, followed by its children. No section heading —
-     the first row *is* the parent/landing, labelled with the bare section
-     name (not "… Overview"; the drawer still uses that string). List rows
-     hug their label (`sidenav-item` + `py-3`, no fixed height) with cream
-     hairlines (`border-y border-cream` + `-mb-px`). Single-line T18 (14px
-     at 16px line) + 12px T/B is ~40px; wrapped labels grow and keep the
-     12px inset. The chevron stays vertically centered on the whole row
-     (`items-center`). The first row skips its top border (no title rule
-     above it) and has no extra offset — only the shared 12px row pad, which
-     is also the gap under Back. The current page carries aria-current and
-     the crimson underlined treatment (same T18 weight as siblings, no
-     chevron). Chevrons sit flush on the shared right edge with no second
-     inset on the icon.
+     Back button to the section's parent, section heading, then the section's own
+     page followed by its children. The heading carries the 1px cream rule; list
+     rows hug their label (`sidenav-item` + `py-3`, no fixed height) with the
+     same cream hairlines as before (`border-y border-cream` + `-mb-px`).
+     Single-line T18 (14px at 16px line) + 12px T/B is ~40px; wrapped labels
+     grow and keep the 12px inset. The chevron stays vertically centered on
+     the whole row (`items-center`). The first row skips its top border so
+     it does not double the title rule; it does not get extra padding. The current page
+     carries aria-current and the crimson underlined treatment (same T18
+     weight as siblings, no chevron); an ancestor heading
+     carries data-current="true" — the source uses both mechanisms and dropping
+     either one breaks the styling or the semantics (content-ia.md, Appendix A4).
+     The title is `w-full` (no extra `pr-*`) so its cream rule is the same
+     content width as the rows; chevrons sit flush on that shared right
+     edge with no second inset on the icon.
      ========================================================================= */
   function renderSidenav(slug) {
     const section = sectionOf(slug);
@@ -1536,7 +1534,7 @@
         `<span class="t-sidenav-back">${esc(PAGES[parent].l)}</span></a>`
       : '';
 
-    const rows = [{ slug: section, label: PAGES[section].l, chevron: false }].concat(
+    const rows = [{ slug: section, label: selfRowLabel(section), chevron: false }].concat(
       (sec.c || []).map((c) => ({ slug: c, label: PAGES[c].l, chevron: hasKids(c) }))
     );
 
@@ -1559,7 +1557,13 @@
       })
       .join('');
 
-    return back + `<ul>${items}</ul>`;
+    return (
+      back +
+      `<div class="pt-6">` +
+      `<div class="t-section-heading w-full border-b border-cream pb-2 text-ink"${section !== slug ? ' data-current="true"' : ''}>${esc(sec.l)}</div>` +
+      `<ul>${items}</ul>` +
+      `</div>`
+    );
   }
 
   /* =========================================================================
@@ -1830,8 +1834,8 @@
     // sidenav at >=lg; without it Home would keep a phantom left rail.
     sidenav.classList.toggle('lg:block', !isHome);
     document.body.classList.toggle('has-sidenav', !isHome);
-    // Back sits above the first sidenav item on nested sections; crumbs
-    // track that first row, so the extra 24px only applies when Back is present.
+    // Back sits above the sidenav title on nested sections; crumbs track
+    // the title, so the extra 24px only applies when that control is present.
     document.body.classList.toggle('has-sidenav-back', !!(section && PAGES[section].p));
     if (isHome) sidenav.removeAttribute('aria-label');
     else sidenav.setAttribute('aria-label', PAGES[sectionOf(slug)].l);
