@@ -510,7 +510,7 @@
      Layout:
        - Header is `position: sticky; top: 0; left: 0; right: 0; width: 100%`.
          No `--sidenav-width` offset, no 325px right spacer. Height is
-         `--header-h` (76px mobile / 120px desktop) with
+         `--header-h` (76px mobile / 118px desktop) with
          `padding-top/bottom: 16px` and `box-sizing: border-box`. Desktop
          stacks lockup+CTAs+search over the section links; mobile is one
          lockup row with Search + Menu icons.
@@ -565,7 +565,7 @@
   }
 
   /* Height lives on the <header> so the cream border stays inside --header-h
-     (76 mobile / 120 desktop) and sticky sidenav `top` stays in lockstep. */
+     (76 mobile / 118 desktop) and sticky sidenav `top` stays in lockstep. */
   rvt-header header {
     position: relative;
     height: var(--header-h);
@@ -791,7 +791,7 @@
 
   @media screen(lg) {
     :root {
-      --header-h: 120px;     /* 16 + 48 lockup + 16 gap + 24 nav + 16 */
+      --header-h: 118px;     /* 16 + 48 lockup + 16 gap + 24 nav + 14 */
       --chrome-gutter: 40px; /* 16px outer + 24px inner; matches Figma header */
     }
 
@@ -823,7 +823,10 @@
       display: flex;
       align-items: center;
       gap: 24px;
-      padding: 0 24px 16px;
+      /* 14px + link padding-bottom 2px = 16px from the 20px line-box
+         to the header bottom. Do not drop the 2px on the links — hover
+         underline and the 24px item box stay intact. */
+      padding: 0 24px 14px;
     }
     .has-sidenav #sidenav {
       position: sticky;
@@ -898,7 +901,7 @@
 
   <!-- =====================================================================
        REGION 1 — MASTHEAD
-       Figma rvt-header `1436:242590` (desktop; 16px top/bottom pad → 120px)
+       Figma rvt-header `1436:242590` (desktop; 16px top / 16px from type → 118px)
        + mobile 375×76 (16 + 44 lockup + 16). Desktop: lockup, section
        links, crimson CTAs, search icon. Mobile: lockup, search icon, Menu.
        Search opens a drawer (zoo v1 panel: trident, close, field + Go).
