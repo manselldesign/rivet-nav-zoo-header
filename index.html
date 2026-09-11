@@ -362,6 +362,14 @@
     padding: 0;
     justify-content: center;
   }
+  /* Search panel close — Rivet `.rvt-button--medium.rvt-button--icon-only`
+     (32×32) so it matches header Search. Menu drawer close stays 40×40. */
+  #search-drawer-close.nav-btn-close {
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    min-height: 32px;
+  }
   /* Icon-only 62×40 below lg (spec 12.5); labelled at lg with L/R padding
      matching the visual T/B inset (8px = (40 − 24px T14 line box) / 2). */
   .nav-btn-menu {
@@ -622,10 +630,18 @@
     border: 0;
     cursor: pointer;
   }
-  /* Menu + Search icons — Rivet header `.rvt-button--medium.rvt-button--icon-only`
-     (default / Normal). Hover: text → inverse-strong `#000`; fill stays
-     transparent; no underline; no transition. Signed-off 16px hit box is
-     unchanged (docs buttons are 32px outlined; we copy color/bg only). */
+  /* Menu + Search — Rivet `.rvt-button--medium.rvt-button--icon-only`
+     (Normal / 32×32). Hover: text + border → inverse-strong `#000`;
+     fill stays transparent; no underline; no transition. */
+  .masthead-search-btn,
+  #menu-toggle {
+    box-sizing: border-box;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    border: 1px solid #1F2528;
+  }
   .masthead-tool:hover,
   .masthead-tool:active {
     color: #000;
@@ -633,10 +649,20 @@
     text-decoration: none;
     box-shadow: none;
   }
+  .masthead-search-btn:hover,
+  .masthead-search-btn:active,
+  #menu-toggle:hover,
+  #menu-toggle:active {
+    border-color: #000;
+  }
 
-  /* Header CTAs — Figma `1436:242596` / `1436:242597` (crimson outline,
-     Action/small/strong, arrow). Height 40px (Figma medium token 32;
-     signed-off chrome is 40). Padding 12 matches Figma `--rvt-size-12`. */
+  /* Header CTAs — Rivet `.rvt-button.rvt-button--medium.rvt-button--cta`
+     (Normal / medium / 32px, crimson outline, arrow). Geometry from
+     computed docs: height `--rvt-size-32`; padding-block 5px
+     ((32 − 1lh 20 − 2px border) / 2); padding-inline 13px
+     (5 + `--rvt-spacing-xs` 8); gap `--rvt-spacing-xs`; type
+     `--rvt-font-14-bold` via .t16. Hover: CTA Normal (fill transparent;
+     text/border → accent-strong `#6D0808`). */
   .masthead-ctas {
     display: none;
   }
@@ -644,9 +670,9 @@
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    height: 40px;
-    min-height: 40px;
-    padding: 0 12px;
+    height: 32px;
+    min-height: 32px;
+    padding: 5px 13px;
     gap: 8px;
     flex-shrink: 0;
     color: #990000;
@@ -787,22 +813,6 @@
       display: flex;
       align-items: center;
       gap: 16px;
-    }
-
-    /* Figma `1436:242598`: 32×32 ink square. 40×40 aligns with header CTAs. */
-    .masthead-search-btn {
-      box-sizing: border-box;
-      width: 40px;
-      height: 40px;
-      min-width: 40px;
-      min-height: 40px;
-      border: 1px solid #1F2528;
-    }
-    .masthead-search-btn:hover,
-    .masthead-search-btn:active {
-      color: #000;
-      border-color: #000;
-      background-color: transparent;
     }
 
     #menu-toggle {
