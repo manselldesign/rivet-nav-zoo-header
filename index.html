@@ -686,13 +686,14 @@
 
   /* Primary header links — Rivet `.rvt-header-menu__item > a`.
      Default: text-strong `#1F2528`, no underline, transparent bg.
-     :hover on the text link itself does not change color, underline, or
-     background (docs open a dropdown on hover — not copied).
-     Current (`aria-current="page"` / `.is-current`, like Research on the
-     docs URL): accent `#900`, `text-decoration: underline`,
+     :hover / :active on non-current copies sidenav item hover
+     (`hover:underline` on `#sidenav ul a.sidenav-item`): ink color,
+     underline, thickness auto, offset auto, no weight change.
+     Dropdowns omitted. Current (`aria-current="page"` / `.is-current`):
+     accent `#900`, `text-decoration: underline`,
      `text-underline-offset: 4px`. Weight stays 350; Rivet uses GRAD 150
-     which this font request does not include. Current:hover is identical.
-     Dropdown / submenu hover (accent + underline on flyout items) omitted. */
+     which this font request does not include. Current:hover stays that
+     treatment (already underlined — do not restyle as non-current hover). */
   .masthead-nav-link {
     position: relative;
     padding: 2px 0;
@@ -708,7 +709,7 @@
   .masthead-nav-link:active {
     color: #1F2528;
     background-color: transparent;
-    text-decoration: none;
+    text-decoration: underline;
   }
   .masthead-nav-link.is-current,
   .masthead-nav-link.is-current:hover,
