@@ -522,7 +522,7 @@
      Layout:
        - Header is `position: sticky; top: 0; left: 0; right: 0; width: 100%`.
          No `--sidenav-width` offset, no 325px right spacer. Height is
-         `--header-h` (76px mobile / 118px desktop) with
+         `--header-h` (76px mobile / 136px desktop) with
          `padding-top/bottom: 16px` and `box-sizing: border-box`. Desktop
          stacks lockup+CTAs+search over the section links; mobile is one
          lockup row with Search + Menu icons.
@@ -577,7 +577,7 @@
   }
 
   /* Height lives on the <header> so the cream border stays inside --header-h
-     (76 mobile / 118 desktop) and sticky sidenav `top` stays in lockstep. */
+     (76 mobile / 136 desktop) and sticky sidenav `top` stays in lockstep. */
   rvt-header header {
     position: relative;
     height: var(--header-h);
@@ -625,34 +625,25 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 16px;
+    gap: 0;
     flex-shrink: 0;
     margin-left: auto;
   }
 
+  /* Figma mobile (`1431:103547`): 16px Search + Menu glyphs, 16px gap,
+     no bordered chip. 32px hit area keeps the 16px optical gap. */
   .masthead-tool {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 16px;
+    box-sizing: border-box;
+    width: 32px;
+    height: 32px;
     padding: 0;
     color: #1F2528;
     background: transparent;
     border: 0;
     cursor: pointer;
-  }
-  /* Menu + Search — Rivet `.rvt-button--medium.rvt-button--icon-only`
-     (Normal / 32×32). Hover: text + border → inverse-strong `#000`;
-     fill stays transparent; no underline; no transition. */
-  .masthead-search-btn,
-  #menu-toggle {
-    box-sizing: border-box;
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
-    min-height: 32px;
-    border: 1px solid #1F2528;
   }
   .masthead-tool:hover,
   .masthead-tool:active {
@@ -660,12 +651,6 @@
     background-color: transparent;
     text-decoration: none;
     box-shadow: none;
-  }
-  .masthead-search-btn:hover,
-  .masthead-search-btn:active,
-  #menu-toggle:hover,
-  #menu-toggle:active {
-    border-color: #000;
   }
 
   /* Header CTAs — Rivet `.rvt-button.rvt-button--medium.rvt-button--cta`
@@ -700,14 +685,34 @@
     text-decoration: none;
     box-shadow: none;
   }
+  /* 12px CTA arrows: lock to whole CSS pixels so the 12-grid path
+     does not pick up a fractional box or inline-SVG baseline shift. */
+  .masthead-cta [data-icon] {
+    display: block;
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+  .masthead-cta [data-icon] svg {
+    display: block;
+    width: 12px;
+    height: 12px;
+  }
 
-  /* Search field — Rivet `.rvt-header__search-bar input`: no hover rule.
-     `:focus` clears outline/shadow; `:focus-visible` is the global 2px
-     accent-strong ring. Lives in the search drawer, not the masthead. */
+  /* Desktop inline search — Figma `1431:80023` (450×48, 1px ink, Go). */
+  .masthead-search {
+    display: none;
+  }
+  .masthead-search input[type="search"]::placeholder {
+    color: #343C42;
+    opacity: 1;
+  }
+  .masthead-search input[type="search"]:focus,
   #search-drawer input[type="search"]:focus {
     outline: none;
     box-shadow: none;
   }
+  .masthead-search input[type="search"]:focus-visible,
   #search-drawer input[type="search"]:focus-visible {
     isolation: isolate;
     outline: 2px solid #6D0808;
@@ -718,16 +723,8 @@
     display: none;
   }
 
-  /* Primary header links — Rivet `.rvt-header-menu__item > a`.
-     Default: text-strong `#1F2528`, no underline, transparent bg.
-     :hover / :active on non-current copies sidenav item hover
-     (`hover:underline` on `#sidenav ul a.sidenav-item`): ink color,
-     underline, thickness auto, offset auto, no weight change.
-     Dropdowns omitted. Current (`aria-current="page"` / `.is-current`):
-     accent `#900`, `text-decoration: underline`,
-     `text-underline-offset: 4px`. Weight stays 350; Rivet uses GRAD 150
-     which this font request does not include. Current:hover stays that
-     treatment (already underlined — do not restyle as non-current hover). */
+  /* Primary header links — Figma `_Nav item` 14/20. Default wght 350 ink.
+     Current: wght 600, crimson `#900`, 1px underline (Figma `1431:80031`). */
   .masthead-nav-link {
     position: relative;
     padding: 2px 0;
@@ -753,8 +750,18 @@
   .masthead-nav-link[aria-current="page"]:active {
     color: #900;
     background-color: transparent;
-    text-decoration: underline;
-    text-underline-offset: 4px;
+    font-variation-settings: 'wght' 600, 'wdth' 115;
+    text-decoration: none;
+  }
+  .masthead-nav-link.is-current::after,
+  .masthead-nav-link[aria-current="page"]::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 2px;
+    height: 1px;
+    background: #900;
   }
 
   .masthead-top > a:focus-visible,
@@ -803,7 +810,7 @@
 
   @media screen(lg) {
     :root {
-      --header-h: 118px;     /* 16 + 48 lockup + 16 gap + 24 nav + 14 */
+      --header-h: 136px;     /* 24 top + 48 lockup + 16 + 24 nav + 24 */
       --chrome-gutter: 40px; /* 16px outer + 24px inner; matches Figma header */
     }
 
@@ -813,7 +820,7 @@
     }
 
     .masthead-inner {
-      padding: 16px 16px 0;
+      padding: 24px 16px 0;
     }
 
     .masthead-top {
@@ -825,8 +832,41 @@
       display: flex;
       align-items: center;
       gap: 16px;
+      margin-right: 16px;
     }
 
+    .masthead-search {
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      width: 450px;
+      height: 48px;
+      padding-left: 12px;
+      gap: 8px;
+      border: 1px solid #1F2528;
+    }
+    .masthead-search input[type="search"] {
+      min-width: 0;
+      flex: 1;
+      height: 24px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #343C42;
+      font-size: 16px;
+      line-height: 24px;
+      font-variation-settings: 'wght' 350, 'wdth' 110;
+    }
+    .masthead-search .nav-btn-go {
+      height: 48px;
+      min-height: 48px;
+      padding: 0 16px;
+      font-size: 16px;
+      line-height: 24px;
+      font-variation-settings: 'wght' 600, 'wdth' 115;
+    }
+
+    .masthead-search-btn,
     #menu-toggle {
       display: none;
     }
@@ -835,10 +875,7 @@
       display: flex;
       align-items: center;
       gap: 24px;
-      /* 14px + link padding-bottom 2px = 16px from the 20px line-box
-         to the header bottom. Do not drop the 2px on the links — hover
-         underline and the 24px item box stay intact. */
-      padding: 0 24px 14px;
+      padding: 0 24px 24px;
     }
     .has-sidenav #sidenav {
       position: sticky;
@@ -913,11 +950,11 @@
 
   <!-- =====================================================================
        REGION 1 — MASTHEAD
-       Figma rvt-header `1436:242590` (desktop; 16px top / 16px from type → 118px)
-       + mobile 375×76 (16 + 44 lockup + 16). Desktop: lockup, section
-       links, crimson CTAs, search icon. Mobile: lockup, search icon, Menu.
-       Search opens a drawer (zoo v1 panel: trident, close, field + Go).
-       Menu (mobile) opens the existing nav drawer. No inline search field.
+       Current Figma `1431:80017` (desktop 1600×136) + `1431:103547`
+       (mobile 375×76). Desktop: lockup, inline Search the site + Go,
+       primary section links. Mobile: lockup, separate Search and Menu
+       icons. Search icon opens the search drawer; Menu opens the nav
+       drawer. No combined “Menu & Search” control.
        ===================================================================== -->
   <rvt-header>
     <!-- Cream rule is inside --header-h so sticky sidenav `top` stays aligned. -->
@@ -935,13 +972,19 @@
                    page. Closest existing destination is Volunteer. -->
               <a data-nav href="#/volunteer" class="masthead-cta">
                 <span class="t16">Work at the Zoo</span>
-                <span data-icon="arrow-right" class="block size-3 shrink-0"></span>
+                <span data-icon="arrow-right-12" class="block size-3 shrink-0"></span>
               </a>
               <a data-nav href="#/membership" class="masthead-cta">
                 <span class="t16">Become a Member</span>
-                <span data-icon="arrow-right" class="block size-3 shrink-0"></span>
+                <span data-icon="arrow-right-12" class="block size-3 shrink-0"></span>
               </a>
             </div>
+            <form id="masthead-search" class="masthead-search" action="" role="search">
+              <span data-icon="magnifying-glass" class="block size-4 shrink-0 text-ink"></span>
+              <label for="masthead-search-input" class="sr-only">Search the site</label>
+              <input id="masthead-search-input" name="search" type="search" placeholder="Search the site">
+              <button type="submit" class="nav-btn-go shrink-0 bg-ink text-white">Go</button>
+            </form>
             <button id="search-toggle" type="button" aria-expanded="false" aria-controls="search-drawer"
                     class="masthead-tool masthead-search-btn">
               <span class="sr-only">Search</span>
@@ -1265,6 +1308,12 @@
   for (const [name, d] of Object.entries(ICON_16)) {
     ICON_MARKUP[name] = svg('0 0 16 16', `<path d="${d}"/>`);
   }
+
+  /* Masthead CTAs only. Rivet `--rvt-icon-arrow-right` is a 16 box; at 12px
+     the 2-unit shaft lands on y=5.25 and the 2x device grid on half-pixels.
+     Same shaft + chevron construction, snapped to a 12 grid (2px bar). */
+  ICON_MARKUP['arrow-right-12'] =
+    `<svg viewBox="0 0 12 12" width="12" height="12" class="block h-full w-full" fill="currentColor" aria-hidden="true" focusable="false"><path d="M1 5h8L6 2l1-1 4 5-4 5-1-1 3-3H1V5Z"/></svg>`;
 
   /* Sidenav chevron only: same 12px box and Rivet path as elsewhere, but the
      16-wide viewBox is shifted so path x=12.31 sits on the right edge. The
@@ -1809,8 +1858,9 @@
     if (e.target.closest('[data-drawer-root]')) { stack = []; renderDrawer(); }
   });
 
-  /* Search form — no backend in the prototype; submit is swallowed. */
+  /* Search forms — no backend in the prototype; submit is swallowed. */
   searchInput.form.addEventListener('submit', (e) => e.preventDefault());
+  document.getElementById('masthead-search').addEventListener('submit', (e) => e.preventDefault());
 
   /* =========================================================================
      ROUTER
