@@ -867,9 +867,111 @@
     padding-left: var(--sidenav-pad-x);
   }
 
+
+  /*
+    Crimson footer columns. Explore heading is 16/20 wght 700 wdth 100.
+    Address and links stay 14/20 wght 350 wdth 115.
+  */
+  .footer-main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 28px;
+    padding-top: 24px;
+    padding-bottom: 8px;
+  }
+  .footer-identity {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  .footer-identity .t1 {
+    color: #fff;
+  }
+  .footer-address {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 8px;
+  }
+  .footer-address p,
+  .footer-address a {
+    margin: 0;
+    color: #fff;
+    font-size: 14px;
+    line-height: 20px;
+    font-variation-settings: 'wght' 350, 'wdth' 115;
+    text-decoration: none;
+  }
+  .footer-explore {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .footer-explore h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 16px;
+    line-height: 20px;
+    font-variation-settings: 'wght' 700, 'wdth' 100;
+  }
+  .footer-explore ul {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .footer-explore a,
+  .footer-address a {
+    color: #fff;
+    text-decoration: none;
+  }
+  .footer-explore a:hover,
+  .footer-explore a:active,
+  .footer-address a:hover,
+  .footer-address a:active {
+    color: #FAF6EF;
+    text-decoration: underline;
+    text-underline-position: from-font;
+  }
+  @media screen(lg) {
+    .footer-main {
+      flex-direction: row;
+      gap: 64px;
+      padding-top: 48px;
+      padding-bottom: 32px;
+    }
+    .footer-identity {
+      width: 348px;
+      flex-shrink: 0;
+      gap: 16px;
+    }
+    .footer-address {
+      padding-top: 0;
+    }
+    .footer-explore {
+      gap: 12px;
+    }
+    .footer-explore ul {
+      gap: 8px;
+    }
+  }
+
   /* Containing block for the full-height sidenav/content rule. */
   #layout {
     position: relative;
+  }
+  #content-column {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    width: 100%;
+  }
+  #content-column > #main-content {
+    flex: 1 0 auto;
   }
 
   @media screen(lg) {
@@ -916,12 +1018,24 @@
       padding: 0 var(--chrome-gutter) 17px;
     }
     .has-sidenav #sidenav {
-      position: sticky;
+      position: fixed;
       top: var(--header-h);
-      align-self: flex-start;
+      left: 0;
+      height: calc(100vh - var(--header-h));
       max-height: calc(100vh - var(--header-h));
       overflow-y: auto;
       z-index: 10;
+      background: #fff;
+    }
+    .has-sidenav #content-column {
+      margin-left: var(--sidenav-width);
+      width: calc(100% - var(--sidenav-width));
+    }
+    #content-column {
+      min-height: calc(100vh - var(--header-h));
+    }
+    .has-sidenav #content-column .rvt-footer {
+      padding-left: 60px;
     }
     /*
       Full-height cream rule at the sidenav's right edge (spec 9: 1px
@@ -937,14 +1051,7 @@
       this rule is off.
     */
     .has-sidenav #layout::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: calc(var(--sidenav-width) - 1px);
-      width: 1px;
-      background: #F0E1CC;
-      pointer-events: none;
+      content: none;
     }
     /*
       Interior content column only (Home has no .has-sidenav / breadcrumbs).
@@ -1174,7 +1281,7 @@
        single centred column on Home. spec 9, "Grid".
        ===================================================================== -->
   <rvt-main class="flex flex-1 flex-col">
-    <div id="layout" class="flex w-full flex-1 items-stretch">
+    <div id="layout" class="w-full flex-1">
 
       <!--
         REGION 4 — rvt-sidenav (spec 9). Desktop only; below 1024px the drawer
@@ -1211,9 +1318,8 @@
       -->
       <nav id="sidenav" class="hidden shrink-0 border-r border-cream pt-6 lg:block"></nav>
 
+      <div id="content-column">
       <main id="main-content" class="min-w-0 flex-1"></main>
-    </div>
-  </rvt-main>
 
   <!-- =====================================================================
        REGION 8 — FOOTER  (spec 11, `rvt-footer`)
@@ -1230,6 +1336,25 @@
        separated does not exist.
        ===================================================================== -->
   <footer class="rvt-footer shrink-0 bg-crimson pr-4 lg:pr-20">
+    <div class="footer-main">
+      <div class="footer-identity">
+        <p class="t1">Indiana Zooniversity</p>
+        <div class="footer-address">
+          <p>107 S. Indiana Avenue<br>Bloomington, IN 47405-7000</p>
+          <p><a href="tel:+18128554848">(812) 855-4848</a></p>
+        </div>
+      </div>
+      <nav class="footer-explore" aria-label="Explore">
+        <h2>Explore</h2>
+        <ul>
+          <li><a data-nav class="t17" href="#/plan-your-visit">Plan Your Visit</a></li>
+          <li><a data-nav class="t17" href="#/animals-habitats">Animals &amp; Habitats</a></li>
+          <li><a data-nav class="t17" href="#/kids-schools">Kids &amp; Schools</a></li>
+          <li><a data-nav class="t17" href="#/events-activities">Events &amp; Activities</a></li>
+          <li><a data-nav class="t17" href="#/support-the-zoo">Support the Zoo</a></li>
+        </ul>
+      </nav>
+    </div>
     <div class="flex flex-wrap items-center gap-6 py-4">
       <span data-icon="trident" class="block h-7 w-[22px] shrink-0 text-white"></span>
       <div class="rvt-footer-legal">
@@ -1246,6 +1371,9 @@
       </div>
     </div>
   </footer>
+      </div>
+    </div>
+  </rvt-main>
 
   <!-- =====================================================================
        REGION 9 — DRAWER MENU  (spec 7 + spec 8)
